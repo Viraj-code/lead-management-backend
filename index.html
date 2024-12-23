@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lead Management System</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            padding: 20px;
+        }
+
+        .container {
+            margin-top: 20px;
+        }
+
+        .dashboard-section {
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1 class="text-center">Lead Management System</h1>
+
+       
+        <div class="card">
+            <div class="card-header">Add/Edit Lead</div>
+            <div class="card-body">
+                <form id="lead-form">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="restaurant-name">Restaurant Name</label>
+                            <input type="text" class="form-control" id="restaurant-name" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="address">Address</label>
+                            <input type="text" class="form-control" id="address" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="contact-number">Contact Number</label>
+                            <input type="text" class="form-control" id="contact-number" required>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="status">Status</label>
+                            <select class="form-control" id="status">
+                                <option value="New">New</option>
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="assigned-kam">Assigned KAM</label>
+                            <input type="text" class="form-control" id="assigned-kam" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Lead</button>
+                </form>
+            </div>
+        </div>
+
+      
+        <div class="card mt-4">
+            <div class="card-header">Add Contact</div>
+            <div class="card-body">
+                <form id="contact-form">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="contact-name">Name</label>
+                            <input type="text" class="form-control" id="contact-name" required>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="role">Role</label>
+                            <input type="text" class="form-control" id="role" required>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="phone-number">Phone Number</label>
+                            <input type="text" class="form-control" id="phone-number" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" required>
+                    </div>
+                    <button type="submit" class="btn btn-secondary">Save Contact</button>
+                </form>
+            </div>
+        </div>
+
+       
+        <div class="card mt-4">
+            <div class="card-header">Log Interaction</div>
+            <div class="card-body">
+                <form id="interaction-form">
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="interaction-date">Date</label>
+                            <input type="date" class="form-control" id="interaction-date" required>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="interaction-type">Type</label>
+                            <select class="form-control" id="interaction-type">
+                                <option value="Call">Call</option>
+                                <option value="Visit">Visit</option>
+                                <option value="Order">Order</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="follow-up">Follow-up Required</label>
+                            <select class="form-control" id="follow-up">
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="notes">Notes</label>
+                        <textarea class="form-control" id="notes" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">Save Interaction</button>
+                </form>
+            </div>
+        </div>
+
+       
+        <div class="dashboard-section">
+            <h2>Dashboard</h2>
+            <input type="text" class="form-control mb-3" id="search-leads" placeholder="Search leads...">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>All Leads</h4>
+                    <ul class="list-group" id="all-leads">
+                      
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h4>Today's Pending Calls</h4>
+                    <ul class="list-group" id="pending-calls">
+                       
+                    </ul>
+                    <h4 class="mt-4">Recent Interactions</h4>
+                    <ul class="list-group" id="recent-interactions">
+                       
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const apiBaseUrl = "http://localhost:3000"; 
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const leadForm = document.getElementById('lead-form');
+            const contactForm = document.getElementById('contact-form');
+            const interactionForm = document.getElementById('interaction-form');
+            const searchInput = document.getElementById('search-leads');
+            const allLeadsList = document.getElementById('all-leads');
+            const pendingCallsList = document.getElementById('pending-calls');
+            const recentInteractionsList = document.getElementById('recent-interactions');
+
+            const fetchLeads = async () => {
+                try {
+                    const response = await fetch(`${apiBaseUrl}/leads`);
+                    const data = await response.json();
+                    allLeadsList.innerHTML = '';
+                    data.leads.forEach(lead => {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item';
+                        li.textContent = lead.name;
+                        allLeadsList.appendChild(li);
+                    });
+                } catch (error) {
+                    console.error('Error fetching leads:', error);
+                }
+            };
+
+            const fetchDashboardData = async () => {
+                try {
+                    const response = await fetch(`${apiBaseUrl}/dashboard`);
+                    const data = await response.json();
+
+                    pendingCallsList.innerHTML = '';
+                    data.pendingCalls.forEach(call => {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item';
+                        li.textContent = `${call.date}: ${call.type}`;
+                        pendingCallsList.appendChild(li);
+                    });
+
+                    recentInteractionsList.innerHTML = '';
+                    data.recentInteractions.forEach(interaction => {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item';
+                        li.textContent = `${interaction.date}: ${interaction.type}`;
+                        recentInteractionsList.appendChild(li);
+                    });
+                } catch (error) {
+                    console.error('Error fetching dashboard data:', error);
+                }
+            };
+
+            leadForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const lead = {
+                    name: document.getElementById('restaurant-name').value,
+                    address: document.getElementById('address').value,
+                    contactNumber: document.getElementById('contact-number').value,
+                    status: document.getElementById('status').value,
+                    assignedKAM: document.getElementById('assigned-kam').value,
+                };
+
+                try {
+                    await
+                        fetch(`${apiBaseUrl}/leads`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(lead),
+                        });
+                    leadForm.reset();
+                    fetchLeads();
+                } catch (error) {
+                    console.error('Error saving lead:', error);
+                }
+            });
+
+            contactForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const contact = {
+                    name: document.getElementById('contact-name').value,
+                    role: document.getElementById('role').value,
+                    phoneNumber: document.getElementById('phone-number').value,
+                    email: document.getElementById('email').value,
+                };
+
+                try {
+                    await fetch(`${apiBaseUrl}/contacts`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(contact),
+                    });
+                    contactForm.reset();
+                    alert('Contact saved successfully!');
+                } catch (error) {
+                    console.error('Error saving contact:', error);
+                }
+            });
+
+            interactionForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const interaction = {
+                    date: document.getElementById('interaction-date').value,
+                    type: document.getElementById('interaction-type').value,
+                    followUp: document.getElementById('follow-up').value,
+                    notes: document.getElementById('notes').value,
+                };
+
+                try {
+                    await fetch(`${apiBaseUrl}/interactions`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(interaction),
+                    });
+                    interactionForm.reset();
+                    fetchDashboardData();
+                } catch (error) {
+                    console.error('Error saving interaction:', error);
+                }
+            });
+
+            searchInput.addEventListener('input', async (event) => {
+                const query = event.target.value.toLowerCase();
+                const response = await fetch(`${apiBaseUrl}/leads`);
+                const data = await response.json();
+                allLeadsList.innerHTML = '';
+                data.leads
+                    .filter(lead => lead.name.toLowerCase().includes(query))
+                    .forEach(filteredLead => {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item';
+                        li.textContent = filteredLead.name;
+                        allLeadsList.appendChild(li);
+                    });
+            });
+
+            fetchLeads();
+            fetchDashboardData();
+        });
+    </script>
+
+</body>
+
+</html>
