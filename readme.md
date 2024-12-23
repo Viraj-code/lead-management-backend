@@ -5,6 +5,7 @@ The **Lead Management System** is a web-based application for managing restauran
 ## Features
 
 ### Backend Features
+
 1. **Lead Management**
    - Create and update leads with details like name, address, contact number, status, and assigned KAM.
 2. **Contact Management**
@@ -17,6 +18,7 @@ The **Lead Management System** is a web-based application for managing restauran
    - View pending calls and recent interactions.
 
 ### Frontend Features
+
 - **Responsive Forms**
   - Forms to add/edit leads, contacts, and interactions.
 - **Real-Time Search**
@@ -37,6 +39,7 @@ The **Lead Management System** is a web-based application for managing restauran
 ## Installation and Setup
 
 ### Backend
+
 1. Clone the repository:
    ```bash
    git clone https://github.com/Viraj-code/lead-management-backend.git
@@ -56,6 +59,7 @@ The **Lead Management System** is a web-based application for managing restauran
    The server will run at `http://localhost:3000`.
 
 ### Frontend
+
 1. Open the frontend code in your preferred editor or host it on a server.
 2. Update the `apiBaseUrl` in the `<script>` tag to match your backend URL:
    ```javascript
@@ -68,16 +72,20 @@ The **Lead Management System** is a web-based application for managing restauran
 ## API Endpoints
 
 ### Leads
+
 - **POST `/leads`**: Create or update a lead.
 - **GET `/leads`**: Fetch all leads (with optional search).
 
 ### Contacts
+
 - **POST `/leads/:id/contacts`**: Add a contact to a lead.
 
 ### Interactions
+
 - **POST `/interactions`**: Add a new interaction.
 
 ### Dashboard
+
 - **GET `/dashboard`**: Fetch dashboard data (pending calls, recent interactions).
 
 ---
@@ -98,10 +106,3 @@ The **Lead Management System** is a web-based application for managing restauran
 - Advanced filters and analytics.
 
 ---
-
-## Contributing
-
-Contributions are welcome! Please fork the repository and submit a pull request.
-
----
-
